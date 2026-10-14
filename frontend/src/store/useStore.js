@@ -3,8 +3,8 @@ import { api, setRemoteAuth } from '../lib/api.js'
 import { localTZ } from '../lib/format.js'
 import { t } from '../lib/i18n.js'
 import { registerCustom, healCustomEx } from '../lib/exercises.js'
-import { DEMO, DEMO_SEEDED } from '../lib/demo.js'
-import { rememberDefaultLang } from '../lib/default-lang.js'
+import { DEMO, DEMO_SEEDED, PERSONAL } from '../lib/demo.js'
+import { matchLocale, rememberDefaultLang } from '../lib/default-lang.js'
 import { guestAllowed } from '../lib/guest.js'
 import { MOBILE, initReminderSync, nativeLoad, nativeSave, onAppActive, readJsonFile, syncReminder, writeAutoBackup, writeJsonFile } from '../lib/mobile.js'
 import { initHealthSync, syncHealth } from '../lib/health-sync.js'
@@ -246,6 +246,7 @@ const clone = o => JSON.parse(JSON.stringify(o))
 // picks a language.
 const detectedLang = () => {
   try {
+    if (PERSONAL) return matchLocale(navigator.language) || 'en'
     const base = (navigator.language || '').toLowerCase().split('-')[0]
     if (RTL_LANGS.has(base)) return base
   } catch (e) { /* ignore */ }
@@ -1910,9 +1911,10 @@ export const useStore = create((set, get) => {
         finishBoot({ needsMobileOnboarding: !remote && !hasData(get().S) })
         return
       }
-      // Demo build (GitHub Pages): no backend at all — seed once, stay in guest mode.
+      // Static Pages builds have no backend. The personal build starts empty and
+      // never imports the example profile or its reset action.
       if (DEMO) {
-        if (!localStorage.getItem(DEMO_SEEDED)) {
+        if (!PERSONAL && !localStorage.getItem(DEMO_SEEDED)) {
           localStorage.setItem(DEMO_SEEDED, '1')
           await get().resetDemo()
         }
