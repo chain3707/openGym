@@ -43,7 +43,7 @@ jobs:
         working-directory: frontend
         env:
           VITE_PERSONAL: '1'
-      # The 180 px stills and animations from catalogue/media, served next to the demo
+      # The 180 px stills and animations from catalogue/media, served next to the personal app
       - run: node scripts/catalogue/stage-media.mjs frontend/dist
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
