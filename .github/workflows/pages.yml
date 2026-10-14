@@ -37,6 +37,8 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
         working-directory: frontend
+      - run: npm test -- src/views/Login.device-link.test.jsx src/views/Login.password.test.jsx src/views/CoachChat.demo-failure.test.jsx src/views/Plan.rotation.test.jsx src/components/SyncBanner.test.jsx src/lib/coach-api.i18n.test.js
+        working-directory: frontend
       - run: npm run build
         working-directory: frontend
         env:
